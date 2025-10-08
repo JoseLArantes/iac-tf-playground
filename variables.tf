@@ -1,17 +1,17 @@
 # Global configs
 variable "region" {
-    description = "AWS Region"
-    type        = string
-    default     = "us-east-1"
+  description = "AWS Region"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "common_tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)
   default = {
-    Project     = "JLA Cloud"
-    ManagedBy   = "terraform"
-    terraform   = "true"
+    Project   = "JLA Cloud"
+    ManagedBy = "terraform"
+    terraform = "true"
   }
 }
 

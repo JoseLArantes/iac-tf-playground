@@ -68,8 +68,8 @@ output "public_route_table_id" {
 output "all_security_group_ids" {
   description = "Map of all security group IDs created by this module"
   value = {
-    web_tier    = aws_security_group.web_tier.id
-    app_tier    = aws_security_group.app_tier.id
+    web_tier = aws_security_group.web_tier.id
+    app_tier = aws_security_group.app_tier.id
   }
 }
 
@@ -92,9 +92,9 @@ output "route_table_ids_by_type" {
 output "vpc_info" {
   description = "Complete VPC information summary"
   value = {
-    vpc_id              = aws_vpc.main.id
-    vpc_cidr            = aws_vpc.main.cidr_block
-    availability_zones  = local.selected_azs
+    vpc_id             = aws_vpc.main.id
+    vpc_cidr           = aws_vpc.main.cidr_block
+    availability_zones = local.selected_azs
     public_subnets     = length(aws_subnet.public)
     private_subnets    = length(aws_subnet.private)
     internet_gateway   = aws_internet_gateway.main.id

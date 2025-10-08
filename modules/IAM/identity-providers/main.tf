@@ -18,7 +18,7 @@ resource "aws_iam_role" "github_actions" {
         }
         Condition = {
           StringLike = {
-            "token.actions.githubusercontent.com:sub": ["repo:${var.github_org}/${var.github_repo}:*"]
+            "token.actions.githubusercontent.com:sub" : ["repo:${var.github_org}/${var.github_repo}:*"]
           }
         }
       }
@@ -27,7 +27,7 @@ resource "aws_iam_role" "github_actions" {
 
   tags = merge(var.tags, {
     Name = var.idp_name
-  })  
+  })
 
 }
 
