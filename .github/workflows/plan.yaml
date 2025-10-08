@@ -1,67 +1,71 @@
 name: Terraform plan
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment name (dev, principal)'
+        required: true
+        type: choice
+        options:
+          - dev
+          - principal
+        default: principal
 
-  inputs:
-    environment:
-      description: 'Environment name (dev, principal)'
-      required: true
-      options:
-        - dev
-        - principal
-      default: principal
-      
-  jobs:
-    terraform:
-      name: 'Terraform Plan'
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
+jobs:
+  terraform:
+    name: 'Terraform Plan'
+    runs-on: ubuntu-latest
+    outputs:
+      plan: ${{ steps.terraform-plan.outputs.plan }}
 
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v2
-          with:
-            terraform_version: 1.7.6
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-        - name: Terraform Init
-          run: terraform init
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-        - name: Select Workspace
-          run: terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.6
 
-        - name: Terraform Format
-          run: terraform fmt -check
+      - name: Terraform Init
+        run: terraform init
 
-        - name: Terraform Lint
-          uses: dflook/terraform-linters@v1
-          with:
-            tf_files: '**/*.tf'
+      - name: Select Workspace
+        run: terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }}
 
-        - name: Terraform Plan
-          id: terraform-plan
-          run: |
-            terraform plan -out=tfplan
-            echo "plan="$(cat tfplan | base64) >> $GITHUB_OUTPUT
-          
-          outputs:
-            plan: ${{ steps.terraform-plan.outputs.stdout }}
+      - name: Terraform Format
+        run: terraform fmt -check
 
-        - name: Write plan on Pull pull_request
-          if: github.event_name == 'pull_request'
-          uses: marocchino/sticky-pull-request-comment@v2
-          with:
-            header: terraform plan
-            message: |
-              ```terraform
-              ${{ steps.terraform-plan.outputs.plan }}
-              ```
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Terraform Lint
+        uses: dflook/terraform-linters@v1
+        with:
+          tf_files: '**/*.tf'
+
+      - name: Terraform Plan
+        id: terraform-plan
+        run: |
+          terraform plan -out=tfplan
+          echo "plan=$(terraform show -no-color tfplan)" >> $GITHUB_OUTPUT
+
+      - name: Write plan on Pull Request
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: terraform plan
+          message: |
+            ```terraform
+            ${{ steps.terraform-plan.outputs.plan }}
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
