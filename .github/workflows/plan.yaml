@@ -23,8 +23,6 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    outputs:
-      plan: ${{ steps.terraform-plan.outputs.plan }}
 
     steps:
       - name: Checkout code
@@ -40,6 +38,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.8.5
+          terraform_wrapper: false
 
       - name: Terraform Init
         run: terraform init
@@ -67,17 +66,33 @@ jobs:
 
       - name: Terraform Plan
         id: terraform-plan
-        run: terraform plan -out=tfplan -no-color
+        run: |
+          terraform plan -out=tfplan -no-color
+        continue-on-error: true
+
+      - name: Generate Plan Output
+        id: plan-output
+        run: |
+          PLAN_OUTPUT=$(terraform show -no-color tfplan)
+          echo "plan<<EOF" >> $GITHUB_OUTPUT
+          echo "$PLAN_OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Write plan on Pull Request
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: terraform plan
+          header: terraform-plan
           message: |
             ## Terraform Plan
+            
+            <details>
+            <summary>Show Plan</summary>
+            
             ```terraform
-            $(terraform show -no-color tfplan)
+            ${{ steps.plan-output.outputs.plan }}
             ```
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            
+            </details>
+            
+            *Workspace: `${{ env.WORKSPACE_NAME }}`*
