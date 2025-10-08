@@ -43,8 +43,17 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Set Environment Variable
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "WORKSPACE_NAME=principal" >> $GITHUB_ENV
+          else
+            echo "WORKSPACE_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+          fi
+
       - name: Select Workspace
-        run: terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }}
+        run: terraform workspace select ${{ env.WORKSPACE_NAME }} || terraform workspace new ${{ env.WORKSPACE_NAME }}
 
       - name: Terraform Format
         run: terraform fmt -check
