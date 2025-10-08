@@ -28,3 +28,13 @@ output "s3_iac_bucket_name" {
   description = "Name of the S3 bucket for terraform state"
   value       = try(module.s3_iac.bucket_name, null)
 }   
+
+output "github_role_arn" {
+  description = "ARN of the IAM role for GitHub Actions"
+  value       = module.github_oidc.role_arn
+}
+
+output "github_provider_arn" {
+  description = "ARN of the GitHub OIDC provider"
+  value       = module.github_oidc.provider_arn
+}

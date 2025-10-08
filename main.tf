@@ -2,7 +2,8 @@ locals {
   environment = terraform.workspace == "default" ? var.environment : terraform.workspace
   environment_validation = terraform.workspace == "default" || terraform.workspace == var.environment
   valid_environments = ["dev", "principal"]
-
+  github_org = "JoseLArantes"
+  github_repo = "iac-tf-playground"
   # Merge common tags with environment-specific tags
   common_tags = merge(var.common_tags, {
     Environment = local.environment
@@ -33,4 +34,14 @@ module "vpc" {
 
   environment = local.environment
   tags        = local.common_tags
+}
+
+module "github_oidc" {
+  source = "./modules/IAM/identity-providers"
+
+  idp_name    = "${local.environment}-github-actions"
+  github_org  = local.github_org
+  github_repo = local.github_repo
+  
+  tags = local.common_tags
 }
