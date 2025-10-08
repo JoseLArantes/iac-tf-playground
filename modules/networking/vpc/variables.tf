@@ -39,3 +39,13 @@ variable "environment" {
   type        = string
   default     = ""
 }
+
+variable "sg_name" {
+  description = "Name of the security group"
+  type        = string
+}
+
+variable "sg_description" {
+  description = "Description for the security group"
+  type        = string
+}

@@ -12,6 +12,14 @@ resource "aws_vpc" "main" {
   })
 }
 
+module "sg_base" {
+  source        = "../sgs"
+  vpc_id        = aws_vpc.main.id
+  sg_name       = "${var.environment}-base"
+  sg_description = "Base security group for ${var.environment}"
+  tags          = var.tags
+}
+
 # Internet Gateway for public internet access
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
