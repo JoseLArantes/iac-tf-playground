@@ -1,7 +1,7 @@
 locals {
-  environment            = terraform.workspace == "default" ? var.environment : terraform.workspace
-  github_org             = "JoseLArantes"
-  github_repo            = "iac-tf-playground"
+  environment = terraform.workspace == "default" ? var.environment : terraform.workspace
+  github_org  = "JoseLArantes"
+  github_repo = "iac-tf-playground"
   # Merge common tags with environment-specific tags
   common_tags = merge(var.common_tags, {
     Environment = local.environment
