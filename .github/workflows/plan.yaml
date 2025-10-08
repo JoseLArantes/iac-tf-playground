@@ -46,10 +46,11 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check
 
-      - name: Terraform Lint
-        uses: dflook/terraform-linters@v1
-        with:
-          tf_files: '**/*.tf'
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Run TFLint
+        run: tflint --init && tflint
 
       - name: Terraform Plan
         id: terraform-plan
