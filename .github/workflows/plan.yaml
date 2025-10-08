@@ -57,9 +57,7 @@ jobs:
 
       - name: Terraform Plan
         id: terraform-plan
-        run: |
-          terraform plan -out=tfplan
-          echo "plan=$(terraform show -no-color tfplan)" >> $GITHUB_OUTPUT
+        run: terraform plan -out=tfplan -no-color
 
       - name: Write plan on Pull Request
         if: github.event_name == 'pull_request'
@@ -67,8 +65,9 @@ jobs:
         with:
           header: terraform plan
           message: |
+            ## Terraform Plan
             ```terraform
-            ${{ steps.terraform-plan.outputs.plan }}
+            $(terraform show -no-color tfplan)
             ```
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
