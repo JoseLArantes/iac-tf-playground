@@ -19,6 +19,9 @@ jobs:
   terraform:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read      
     outputs:
       plan: ${{ steps.terraform-plan.outputs.plan }}
 
