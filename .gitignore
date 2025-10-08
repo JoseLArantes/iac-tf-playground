@@ -1,2 +1,35 @@
 ._*
-.terraform
+# Local system files
+.DS_Store
+Thumbs.db
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Terraform directories
+.terraform/
+.terraform.lock.hcl
+
+# Sensitive variable files
+*.tfvars
+*.tfvars.json
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS X metadata
+._*
+
+# Logs
+*.log
+
+# Plan output
+*.tfplan
+
+# Ignore backup files
+*~
