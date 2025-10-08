@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read      
+      contents: read
+      pull-requests: write
     outputs:
       plan: ${{ steps.terraform-plan.outputs.plan }}
 
