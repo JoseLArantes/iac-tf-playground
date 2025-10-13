@@ -15,6 +15,8 @@ crash.log
 # Sensitive variable files
 *.tfvars
 *.tfvars.json
+# But allow environment-specific configs
+!environments/*.tfvars
 
 # Editor/IDE files
 .vscode/
