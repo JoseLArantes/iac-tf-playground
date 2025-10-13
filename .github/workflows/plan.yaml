@@ -40,20 +40,17 @@ jobs:
           terraform_version: 1.8.5
           terraform_wrapper: false
 
-      - name: Terraform Init
-        run: terraform init
-
       - name: Set Environment Variable
         id: set-env
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "WORKSPACE_NAME=principal" >> $GITHUB_ENV
+            echo "ENVIRONMENT=principal" >> $GITHUB_ENV
           else
-            echo "WORKSPACE_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+            echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
           fi
 
-      - name: Select Workspace
-        run: terraform workspace select ${{ env.WORKSPACE_NAME }} || terraform workspace new ${{ env.WORKSPACE_NAME }}
+      - name: Terraform Init
+        run: terraform init -backend-config="environments/${{ env.ENVIRONMENT }}.tfbackend"
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -67,7 +64,8 @@ jobs:
       - name: Terraform Plan
         id: terraform-plan
         run: |
-          terraform plan -out=tfplan -no-color
+          terraform workspace select ${{ env.ENVIRONMENT }} || terraform workspace new ${{ env.ENVIRONMENT }}
+          terraform plan -var-file="environments/${{ env.ENVIRONMENT }}.tfvars" -out=tfplan -no-color
         continue-on-error: true
 
       - name: Generate Plan Output
@@ -95,4 +93,4 @@ jobs:
             
             </details>
             
-            *Workspace: `${{ env.WORKSPACE_NAME }}`*
+            *Environment: `${{ env.ENVIRONMENT }}`*
