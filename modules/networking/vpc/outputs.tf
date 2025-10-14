@@ -15,6 +15,16 @@ output "internet_gateway_id" {
   value       = aws_internet_gateway.main.id
 }
 
+output "nat_gateway_id" {
+  description = "ID of the NAT Gateway"
+  value       = try(aws_nat_gateway.main[0].id, null)
+}
+
+output "nat_gateway_eip" {
+  description = "Elastic IP address of the NAT Gateway"
+  value       = try(aws_eip.nat[0].public_ip, null)
+}
+
 output "public_subnet_ids" {
   description = "List of IDs of the public subnets"
   value       = aws_subnet.public[*].id

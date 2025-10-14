@@ -52,3 +52,64 @@ variable "private_subnet_cidrs" {
   type        = list(string)
   default     = ["10.0.10.0/24", "10.0.20.0/24"]
 }
+
+# Elastic Beanstalk Configuration
+variable "eb_enabled" {
+  description = "Enable Elastic Beanstalk deployment"
+  type        = bool
+  default     = false
+}
+
+variable "eb_instance_type" {
+  description = "EC2 instance type for Elastic Beanstalk"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "eb_ec2_key_name" {
+  description = "EC2 key pair name for SSH access to Elastic Beanstalk instances"
+  type        = string
+  default     = ""
+}
+
+variable "eb_autoscaling_min_size" {
+  description = "Minimum number of instances for Elastic Beanstalk"
+  type        = number
+  default     = 1
+}
+
+variable "eb_autoscaling_max_size" {
+  description = "Maximum number of instances for Elastic Beanstalk"
+  type        = number
+  default     = 4
+}
+
+variable "eb_solution_stack_name" {
+  description = "Elastic Beanstalk solution stack name"
+  type        = string
+  default     = "64bit Amazon Linux 2023 v4.7.2 running Docker"
+}
+
+variable "eb_use_docker" {
+  description = "Whether to use Docker for Elastic Beanstalk deployment"
+  type        = bool
+  default     = true
+}
+
+variable "eb_docker_image" {
+  description = "Docker image URI from ECR"
+  type        = string
+  default     = ""
+}
+
+variable "eb_docker_container_port" {
+  description = "Port that the Docker container exposes"
+  type        = number
+  default     = 8000
+}
+
+variable "eb_environment_variables" {
+  description = "Environment variables for Elastic Beanstalk application"
+  type        = map(string)
+  default     = {}
+}
