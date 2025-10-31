@@ -49,3 +49,9 @@ variable "sg_description" {
   description = "Description for the security group"
   type        = string
 }
+
+variable "enable_nat_gateway" {
+  description = "Enable NAT Gateway for private subnets internet access"
+  type        = bool
+  default     = true
+}
