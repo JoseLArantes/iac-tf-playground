@@ -1,0 +1,57 @@
+version: 3
+automerge: false
+delete_source_branch_on_merge: false
+parallel_plan: true
+parallel_apply: true
+
+projects:
+  # Dev environment
+  - name: dev
+    dir: .
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "environments/dev.tfvars", "environments/dev.tfbackend"]
+      enabled: true
+    terraform_version: v1.8.5
+    apply_requirements: [approved]
+    workflow: dev_workflow
+
+  # Principal environment
+  - name: principal
+    dir: .
+    workspace: default
+    autoplan:
+      when_modified: ["*.tf", "environments/principal.tfvars", "environments/principal.tfbackend"]
+      enabled: true
+    terraform_version: v1.8.5
+    apply_requirements: [approved]
+    workflow: principal_workflow
+
+workflows:
+  dev_workflow:
+    plan:
+      steps:
+        - init:
+            extra_args: [-backend-config=environments/dev.tfbackend]
+        - plan:
+            extra_args: [-var-file=environments/dev.tfvars]
+    apply:
+      steps:
+        - init:
+            extra_args: [-backend-config=environments/dev.tfbackend]
+        - apply:
+            extra_args: [-var-file=environments/dev.tfvars]
+
+  principal_workflow:
+    plan:
+      steps:
+        - init:
+            extra_args: [-backend-config=environments/principal.tfbackend]
+        - plan:
+            extra_args: [-var-file=environments/principal.tfvars]
+    apply:
+      steps:
+        - init:
+            extra_args: [-backend-config=environments/principal.tfbackend]
+        - apply:
+            extra_args: [-var-file=environments/principal.tfvars]
