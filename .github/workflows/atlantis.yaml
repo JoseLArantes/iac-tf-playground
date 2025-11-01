@@ -1,0 +1,21 @@
+name: Atlantis Auto Plan
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  notify_atlantis:
+    name: Notify Atlantis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Notify Atlantis
+        uses: runatlantis/atlantis-github-app@v0.8.0
+        with:
+          atlantis-url: https://enneasyllabic-reid-unanimatingly.ngrok-free.dev
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
